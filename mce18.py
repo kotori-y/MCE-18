@@ -4,7 +4,7 @@ Description: Calculate MCE-18 index based on paper \
 Author: Kotori Y
 Date: 2020-11-28 16:40:13
 LastEditors: Kotori Y
-LastEditTime: 2020-11-28 20:50:01
+LastEditTime: 2020-11-28 20:56:04
 FilePath: \MCE-18\mce18.py
 AuthorMail: kotori@cbdd.me
 '''
@@ -124,12 +124,40 @@ class MCE18:
         sp3 = sp3/self.nC
         return sp3
 
+    def CalculateCyc(self):
+        """calculate the portion of cyclic carbons that 
+        are sp3 hybridized (from 0 to 1)
+
+        Returns
+        -------
+        Cyc : float, from 0 to 1
+            the portion of cyclic carbons that are sp3 hybridized (from 0 to 1)
+        """
+        smarts = "[CX4;R]"
+        Cyc = len(self._MolMatchSmarts(self.mol, smarts))
+        Cyc = Cyc/self.nC
+        return Cyc
+
+    def CalculateAcyc(self):
+        """calculate the portion of acyclic carbon atoms that are sp3 hybridized (from 0 to 1)
+
+        Returns
+        -------
+        Acyc : float, from 0 to 1
+            the portion of acyclic carbon atoms that are sp3 hybridized (from 0 to 1)
+        """
+        smarts = "[CX4;R0]"
+        Acyc = len(self._MolMatchSmarts(self.mol, smarts))
+        Acyc = Acyc/self.nC
+        return Acyc
+
+
 
 if "__main__" == __name__:
 
     smiles = "C1NCCN(C2=CC3N(CC)C=C(C(=O)O)C(=O)C=3C=C2F)C1"
     mol = Chem.MolFromSmiles(smiles)
-    
+
     demo = MCE18(mol)
-    
+
     print("DONE")
