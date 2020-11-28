@@ -4,7 +4,7 @@ Description: Calculate MCE-18 index based on paper \
 Author: Kotori Y
 Date: 2020-11-28 16:40:13
 LastEditors: Kotori Y
-LastEditTime: 2020-11-28 19:49:49
+LastEditTime: 2020-11-28 19:54:34
 FilePath: \MCE-18\mce18.py
 AuthorMail: kotori@cbdd.me
 '''
@@ -78,6 +78,25 @@ def CalculateNAR(mol):
     return NAR
     
 
+def CalculateCHIRAL(mol):
+    """check the presence of a chiral center (0 or 1)
+
+    Parameters
+    ----------
+    mol : rdkit.rdchem.Mol
+        molecule to be checked
+
+    Returns
+    -------
+    CHIRAL : int, 0 or 1
+        the presence of a chiral center (0 or 1)
+    """
+    CHIRAL = (Chem.CalcNumAtomStereoCenters(mol)) > 0
+    CHIRAL = int(CHIRAL)
+    return CHIRAL
+    
+
+
 if "__main__" == __name__:
     
     smiles = "C1NCCN(C2=CC3N(CC)C=C(C(=O)O)C(=O)C=3C=C2F)C1"
@@ -85,5 +104,6 @@ if "__main__" == __name__:
 
     AR = CalculateAR(mol)
     NAR = CalculateNAR(mol)
+    CHIRAL = CalculateCHIRAL(mol)
     Q1Index = CalculateQ1Index(mol)
     print("DONE")
