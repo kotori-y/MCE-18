@@ -4,7 +4,7 @@ Description: Calculate MCE-18 index based on paper \
 Author: Kotori Y
 Date: 2020-11-28 16:40:13
 LastEditors: Kotori Y
-LastEditTime: 2020-11-28 19:54:34
+LastEditTime: 2020-11-28 20:01:19
 FilePath: \MCE-18\mce18.py
 AuthorMail: kotori@cbdd.me
 '''
@@ -12,6 +12,7 @@ AuthorMail: kotori@cbdd.me
 from rdkit.Chem import AllChem as Chem
 from collections import Counter
 from rdkit.Chem.rdmolops import GetAdjacencyMatrix
+from rdkit.Chem.rdMolDescriptors import CalcNumSpiroAtoms
 
 
 def CalculateQ1Index(mol):
@@ -96,6 +97,24 @@ def CalculateCHIRAL(mol):
     return CHIRAL
     
 
+def CalculateSPIRO(mol):
+    """check the presence of a spiro center (0 or 1)
+
+    Parameters
+    ----------
+    mol : rdkit.rdchem.Mol
+        molecule to be checked
+
+    Returns
+    -------
+    SPIRO : int, 0 or 1
+        the presence of a spiro center (0 or 1)
+    """
+    SPIRO = CalcNumSpiroAtoms(mol) > 0
+    SPIRO = int(SPIRO)
+    return SPIRO
+
+
 
 if "__main__" == __name__:
     
@@ -105,5 +124,6 @@ if "__main__" == __name__:
     AR = CalculateAR(mol)
     NAR = CalculateNAR(mol)
     CHIRAL = CalculateCHIRAL(mol)
+    SPIRO = CalculateSPIRO(mol)
     Q1Index = CalculateQ1Index(mol)
     print("DONE")
