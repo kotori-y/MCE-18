@@ -4,7 +4,7 @@ Description: Calculate MCE-18 index based on paper \
 Author: Kotori Y
 Date: 2020-11-28 16:40:13
 LastEditors: Kotori Y
-LastEditTime: 2020-11-28 20:56:04
+LastEditTime: 2020-11-29 12:33:54
 FilePath: \MCE-18\mce18.py
 AuthorMail: kotori@cbdd.me
 '''
@@ -56,9 +56,9 @@ class MCE18:
 
         """
         matrix = GetAdjacencyMatrix(self.mol)
-        c = Counter(matrix.sum(axis=1))
-        temp = sum([(i**2 - 2*i) * v for i, v in c.items()])
-        Q1Index = (temp + 2)/2
+        M = sum(matrix.sum(axis=1) ** 2)
+        N = self.mol.GetNumAtoms()
+        Q1Index = 3 - 2 * N + M / 2
         return Q1Index
 
     def CalculateAR(self):
@@ -150,13 +150,34 @@ class MCE18:
         Acyc = len(self._MolMatchSmarts(self.mol, smarts))
         Acyc = Acyc/self.nC
         return Acyc
+    
+    def CalculateMCE18(self):
+        
+        AR = self.CalculateAR()
+        NAR = self.CalculateNAR()
+        CHIRAL = self.CalculateCHIRAL()
+        SPIRO = self.CalculateSPIRO()
+        sp3 = self.CalculateSP3()
+        Cyc = self.CalculateCyc()
+        Acyc = self.CalculateAcyc()
+        Q1 = self.CalculateQ1Index()
+
+        part1 = AR + NAR + CHIRAL + SPIRO
+        part2 = sp3 + Cyc - Acyc
+        part3= 1 + sp3
+        part4 = part1 + (part2 / part3)
+        mce = part4 * Q1
+        
+        return mce
 
 
 
 if "__main__" == __name__:
 
-    smiles = "C1NCCN(C2=CC3N(CC)C=C(C(=O)O)C(=O)C=3C=C2F)C1"
+    # smiles = "C1NCCN(C2=CC3N(CC)C=C(C(=O)O)C(=O)C=3C=C2F)C1"
+    smiles = "C1=CC(C(CC)(C/C=C/C2=CC=CC=C2)N(C)CC2CC2)=CC=C1"
     mol = Chem.MolFromSmiles(smiles)
+    # mol = Chem.AddHs(mol)
 
     demo = MCE18(mol)
 
